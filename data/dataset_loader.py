@@ -207,59 +207,141 @@ class InfrastructureDataLoader:
 
         return features
 
+    def _simulate_single_node_removal(
+        self, G: nx.Graph, node_to_remove: int, baseline_size: int,
+        initial_failures: List[int]
+    ) -> float:
+        """
+        模拟移除单个节点后的级联故障规模变化。
+        返回 0~1 的归一化关键性分数。
+        """
+        # 建立节点副本；移除目标节点
+        G_mod = G.copy()
+        if node_to_remove in G_mod.nodes():
+            G_mod.remove_node(node_to_remove)
+
+        # 移除后必须重新映射初始故障集，跳过被移除的节点
+        active_failures = [n for n in initial_failures if n != node_to_remove]
+        if not active_failures:
+            return 0.0
+
+        # 级联模拟（使用和实验一致的 Motter-Lai 模型）
+        caps = {}
+        loads = {}
+        for n in G_mod.nodes():
+            neighbors = list(G_mod.neighbors(n))
+            deg = len(neighbors)
+            neighbor_deg = sum(
+                len(list(G_mod.neighbors(nb))) for nb in neighbors
+            ) if neighbors else 0
+            loads[n] = float(deg + 0.1 * neighbor_deg)
+            caps[n] = loads[n] * 1.5   # capacity_factor = 1.5
+
+        failed = set(active_failures)
+        active_nodes = set(G_mod.nodes()) - failed
+        max_steps = 20
+
+        for _ in range(max_steps):
+            new_failed = set()
+            if len(active_nodes) <= 1:
+                break
+            subG = G_mod.subgraph(active_nodes)
+            for n in active_nodes:
+                nb = list(subG.neighbors(n))
+                d = len(nb)
+                nd = sum(len(list(subG.neighbors(x))) for x in nb) if nb else 0
+                failed_neighbors = sum(
+                    1 for x in G_mod.neighbors(n) if x in failed
+                )
+                cur_load = float(d + 0.1 * nd) * (1.0 + 0.5 * failed_neighbors)
+                if cur_load > caps.get(n, 1.0):
+                    new_failed.add(n)
+            if not new_failed:
+                break
+            failed.update(new_failed)
+            active_nodes -= new_failed
+
+        final_size = len(failed)
+        total = G_mod.number_of_nodes() + 1  # +1 是被移除的节点
+        score = (final_size - baseline_size) / max(total, 1)
+        return max(0.0, score)
+
     def compute_criticality_labels(
         self, G: nx.Graph, n_classes: int = 3
     ) -> np.ndarray:
         """
-        计算节点关键性标签（使用多指标综合 + 百分位数分档）
+        基于级联故障模拟的关键性标签 —— 真正的 resilience-based labeling
 
-        综合指标:
-        - 介数中心性 (betweenness centrality): 衡量节点在网络流中的桥梁作用
-        - 度中心性: 衡量节点的直接连接数
-        - PageRank: 衡量节点的重要性传播
+        对每个节点：
+          1. 在整个网络上以 5% 随机初始故障模拟级联，记录最终规模作为基线
+          2. 移除该节点后，用相同初始故障集重新模拟；规模增幅即为关键性分数
+          3. 按百分位数分成三个均衡类别
 
-        使用百分位数确保三个类别均衡分布
+        这样定义的关键性直接对应论文主题
+        "resilience assessment of interdependent critical infrastructure"
         """
         N = G.number_of_nodes()
+        np.random.seed(42)
+        n_init = max(1, int(N * 0.05))
+        seeds = list(np.random.choice(N, n_init, replace=False))
+        initial_failures = [int(s) for s in seeds]
 
-        # 1. 介数中心性 (最重要的关键性指标)
-        # 对大图使用 k 个抽样节点近似加速
-        if N > 2000:
-            k = min(N, 500)
-            bc = nx.betweenness_centrality(G, k=k, normalized=True)
-        else:
-            bc = nx.betweenness_centrality(G, normalized=True)
-        bc_array = np.array([bc[n] for n in G.nodes()])
+        # 基线级联规模
+        baseline_size = 0
+        caps = {}
+        loads = {}
+        for n in G.nodes():
+            neighbors = list(G.neighbors(n))
+            deg = len(neighbors)
+            neighbor_deg = sum(
+                len(list(G.neighbors(nb))) for nb in neighbors
+            ) if neighbors else 0
+            loads[n] = float(deg + 0.1 * neighbor_deg)
+            caps[n] = loads[n] * 1.5
 
-        # 2. PageRank
-        pr = nx.pagerank(G, alpha=0.85)
-        pr_array = np.array([pr[n] for n in G.nodes()])
+        G_baseline = G.copy()
+        failed_baseline = set(initial_failures)
+        active_baseline = set(G_baseline.nodes()) - failed_baseline
+        for _ in range(20):
+            new_failed = set()
+            if len(active_baseline) <= 1:
+                break
+            subG = G_baseline.subgraph(active_baseline)
+            for n in active_baseline:
+                nb = list(subG.neighbors(n))
+                d = len(nb)
+                nd = sum(len(list(subG.neighbors(x))) for x in nb) if nb else 0
+                fn = sum(1 for x in G_baseline.neighbors(n) if x in failed_baseline)
+                cur = float(d + 0.1 * nd) * (1.0 + 0.5 * fn)
+                if cur > caps.get(n, 1.0):
+                    new_failed.add(n)
+            if not new_failed:
+                break
+            failed_baseline.update(new_failed)
+            active_baseline -= new_failed
+        baseline_size = len(failed_baseline)
 
-        # 3. 度中心性
-        dc_array = np.array([G.degree(n) for n in G.nodes()], dtype=np.float64)
+        # 逐节点移除模拟
+        criticality = np.zeros(N)
+        for i in range(N):
+            score = self._simulate_single_node_removal(
+                G, i, baseline_size, initial_failures
+            )
+            criticality[i] = score
 
-        # 归一化各指标
-        def normalize(arr):
-            mn, mx = arr.min(), arr.max()
-            if mx - mn > 1e-10:
-                return (arr - mn) / (mx - mn)
-            return np.zeros_like(arr)
-
-        bc_norm = normalize(bc_array)
-        pr_norm = normalize(pr_array)
-        dc_norm = normalize(dc_array)
-
-        # 综合关键性分数: 介数50% + PageRank30% + 度20%
-        criticality = 0.50 * bc_norm + 0.30 * pr_norm + 0.20 * dc_norm
-
-        # 使用百分位数分三档，确保均衡分布
+        # 百分位数分三档
         p33 = np.percentile(criticality, 33.33)
         p67 = np.percentile(criticality, 66.67)
 
         discrete_labels = np.zeros(N, dtype=np.int64)
-        discrete_labels[criticality < p33] = 2      # 低关键性 (bottom 33%)
-        discrete_labels[(criticality >= p33) & (criticality < p67)] = 1  # 中 (middle 33%)
-        discrete_labels[criticality >= p67] = 0      # 高关键性 (top 33%)
+        if p67 > p33:
+            discrete_labels[criticality < p33] = 2
+            discrete_labels[(criticality >= p33) & (criticality < p67)] = 1
+            discrete_labels[criticality >= p67] = 0
+        else:
+            # 所有节点的关键性相同（罕见），均匀分配
+            for i in range(N):
+                discrete_labels[i] = i % 3
 
         return discrete_labels
 
@@ -280,8 +362,12 @@ class InfrastructureDataLoader:
         edges = []
         for u, v in G.edges():
             edges.append([u, v])
-            edges.append([v, u])  # 反向边，确保消息双向传播
-        edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+            if u != v:
+                edges.append([v, u])  # 反向边，确保消息双向传播
+        if edges:
+            edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+        else:
+            edge_index = torch.zeros((2, 0), dtype=torch.long)
 
         data = Data(
             x=torch.tensor(features, dtype=torch.float),
