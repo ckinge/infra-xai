@@ -1,10 +1,10 @@
 {
   "Power\u2194Communication (SF-SF)": {
-    "accuracy": 0.8666666746139526,
+    "accuracy": 0.9333333373069763,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.4889099236577749,
-        "fidelity_std": 0.45489658442102515
+        "fidelity_mean": 0.47036136689566777,
+        "fidelity_std": 0.444386212042756
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -15,32 +15,32 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 98,
+    "cascade_size": 99,
     "cross_propagation": true,
-    "resilience": 0.8366666666666667,
+    "resilience": 0.835,
     "counterfactual": {
       "explain": {
-        "reduction": 0.08163265306122448,
-        "final_total": 90
+        "reduction": 0.010101010101010102,
+        "final_total": 98
       },
       "topology": {
-        "reduction": 0.10204081632653061,
-        "final_total": 88
+        "reduction": 0.010101010101010102,
+        "final_total": 98
       },
       "random": {
-        "reduction": 0.02040816326530612,
-        "final_total": 96
+        "reduction": 0.0,
+        "final_total": 99
       }
     },
-    "fusion_a": 0.25,
-    "fusion_b": 0.42857142857142855
+    "fusion_a": 0.6666666666666666,
+    "fusion_b": 0.6666666666666666
   },
   "Power\u2194Transport (SF-SW)": {
     "accuracy": 0.7583333253860474,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.775562459952198,
-        "fidelity_std": 0.3281397969650445
+        "fidelity_mean": 0.5298159816826228,
+        "fidelity_std": 0.386573642046216
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -51,24 +51,24 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 48,
+    "cascade_size": 64,
     "cross_propagation": true,
-    "resilience": 0.92,
+    "resilience": 0.8933333333333333,
     "counterfactual": {
       "explain": {
-        "reduction": 0.14583333333333334,
-        "final_total": 41
+        "reduction": 0.078125,
+        "final_total": 59
       },
       "topology": {
-        "reduction": 0.10416666666666667,
-        "final_total": 43
+        "reduction": 0.015625,
+        "final_total": 63
       },
       "random": {
         "reduction": 0.0,
-        "final_total": 48
+        "final_total": 64
       }
     },
-    "fusion_a": 0.42857142857142855,
+    "fusion_a": 0.3333333333333333,
     "fusion_b": 0.17647058823529413
   }
 }

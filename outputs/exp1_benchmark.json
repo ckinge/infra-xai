@@ -1,69 +1,69 @@
 {
   "scale_free": {
     "GNNExplainer": {
-      "fidelity_mean": 0.4865448872193762,
-      "fidelity_std": 0.46176892013850124,
-      "sparsity_mean": 0.9798792756539237,
-      "sparsity_std": 2.220446049250313e-16,
+      "fidelity_mean": 0.005291016896565756,
+      "fidelity_std": 0.028474992246742773,
+      "sparsity_mean": 0.9899396378269617,
+      "sparsity_std": 1.1102230246251565e-16,
       "num_successful": 30
     },
     "Degree": {
-      "fidelity_mean": 0.007398456335067749,
-      "fidelity_std": 0.02272209263689503,
-      "sparsity_mean": 0.9798792756539237,
-      "sparsity_std": 2.220446049250313e-16,
+      "fidelity_mean": 0.0008416831493377686,
+      "fidelity_std": 0.0038153579779658577,
+      "sparsity_mean": 0.9899396378269617,
+      "sparsity_std": 1.1102230246251565e-16,
       "num_successful": 30
     },
     "Random": {
-      "fidelity_mean": 0.0320960689563132,
-      "fidelity_std": 0.17248236533533545,
-      "sparsity_mean": 0.9798792756539237,
-      "sparsity_std": 2.220446049250313e-16,
+      "fidelity_mean": 0.0016316652297973632,
+      "fidelity_std": 0.007484989653046684,
+      "sparsity_mean": 0.9899396378269617,
+      "sparsity_std": 1.1102230246251565e-16,
       "num_successful": 30
     }
   },
   "small_world": {
     "GNNExplainer": {
-      "fidelity_mean": 0.4633022955075527,
-      "fidelity_std": 0.44900116767881476,
-      "sparsity_mean": 0.9800000000000001,
-      "sparsity_std": 1.1102230246251565e-16,
+      "fidelity_mean": 0.4966429513364801,
+      "fidelity_std": 0.35642908031977916,
+      "sparsity_mean": 0.9899999999999997,
+      "sparsity_std": 3.3306690738754696e-16,
       "num_successful": 30
     },
     "Degree": {
-      "fidelity_mean": 0.02626461734374364,
-      "fidelity_std": 0.14139869989065007,
-      "sparsity_mean": 0.9800000000000001,
-      "sparsity_std": 1.1102230246251565e-16,
+      "fidelity_mean": 0.0006982823212941488,
+      "fidelity_std": 0.0018093336169720561,
+      "sparsity_mean": 0.9899999999999997,
+      "sparsity_std": 3.3306690738754696e-16,
       "num_successful": 30
     },
     "Random": {
-      "fidelity_mean": 0.005971209208170573,
-      "fidelity_std": 0.032155945683877654,
-      "sparsity_mean": 0.9800000000000001,
-      "sparsity_std": 1.1102230246251565e-16,
+      "fidelity_mean": 0.01634828249613444,
+      "fidelity_std": 0.04862317147464074,
+      "sparsity_mean": 0.9899999999999997,
+      "sparsity_std": 3.3306690738754696e-16,
       "num_successful": 30
     }
   },
   "random": {
     "GNNExplainer": {
-      "fidelity_mean": 0.2813383368309587,
-      "fidelity_std": 0.2970344882270884,
-      "sparsity_mean": 0.9951472015528957,
+      "fidelity_mean": 0.23536310788088788,
+      "fidelity_std": 0.41709864799651636,
+      "sparsity_mean": 0.9976235741444869,
       "sparsity_std": 2.220446049250313e-16,
       "num_successful": 30
     },
     "Degree": {
-      "fidelity_mean": 0.0,
-      "fidelity_std": 0.0,
-      "sparsity_mean": 0.9951472015528957,
+      "fidelity_mean": 0.0003195643424987793,
+      "fidelity_std": 0.0011546509790687162,
+      "sparsity_mean": 0.9976235741444869,
       "sparsity_std": 2.220446049250313e-16,
       "num_successful": 30
     },
     "Random": {
-      "fidelity_mean": 3.612041473388672e-05,
-      "fidelity_std": 0.0001714104345855221,
-      "sparsity_mean": 0.9951472015528957,
+      "fidelity_mean": 0.00011552572250366211,
+      "fidelity_std": 0.0005731331019682096,
+      "sparsity_mean": 0.9976235741444869,
       "sparsity_std": 2.220446049250313e-16,
       "num_successful": 30
     }

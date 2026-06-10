@@ -1,62 +1,62 @@
 {
   "varying_failure_ratios": {
     "0.01": {
-      "mean_failure_size": 13.8,
-      "std_failure_size": 11.070682002478438,
-      "mean_resilience": 0.9724
+      "mean_failure_size": 13.6,
+      "std_failure_size": 10.150862032359615,
+      "mean_resilience": 0.9728
     },
     "0.03": {
-      "mean_failure_size": 40.8,
-      "std_failure_size": 2.315167380558045,
-      "mean_resilience": 0.9184000000000001
+      "mean_failure_size": 43.0,
+      "std_failure_size": 2.6076809620810595,
+      "mean_resilience": 0.914
     },
     "0.05": {
-      "mean_failure_size": 57.0,
-      "std_failure_size": 2.0976176963403033,
-      "mean_resilience": 0.8860000000000001
+      "mean_failure_size": 56.2,
+      "std_failure_size": 1.7204650534085253,
+      "mean_resilience": 0.8876
     },
     "0.1": {
-      "mean_failure_size": 83.2,
-      "std_failure_size": 1.16619037896906,
-      "mean_resilience": 0.8336
+      "mean_failure_size": 85.0,
+      "std_failure_size": 3.286335345030997,
+      "mean_resilience": 0.8299999999999998
     },
     "0.15": {
-      "mean_failure_size": 116.8,
-      "std_failure_size": 3.9191835884530852,
-      "mean_resilience": 0.7664
+      "mean_failure_size": 119.2,
+      "std_failure_size": 2.4819347291981715,
+      "mean_resilience": 0.7616000000000002
     },
     "0.2": {
-      "mean_failure_size": 139.6,
-      "std_failure_size": 8.16333265278342,
-      "mean_resilience": 0.7208
+      "mean_failure_size": 145.2,
+      "std_failure_size": 4.069397989875161,
+      "mean_resilience": 0.7096
     }
   },
   "varying_network_size": {
     "100": {
-      "fidelity": 0.3241720171772613,
-      "resilience": 0.87,
-      "failure_size": 13
-    },
-    "200": {
-      "fidelity": 0.7632649220933672,
-      "resilience": 0.91,
+      "fidelity": 0.6343220902558642,
+      "resilience": 0.8200000000000001,
       "failure_size": 18
     },
+    "200": {
+      "fidelity": 0.15571609046855883,
+      "resilience": 0.87,
+      "failure_size": 26
+    },
     "500": {
-      "fidelity": 0.2926442554569803,
+      "fidelity": 8.701980113983155e-05,
       "resilience": 0.904,
       "failure_size": 48
     },
     "1000": {
-      "fidelity": 0.2432981314137578,
-      "resilience": 0.899,
-      "failure_size": 101
+      "fidelity": 0.14091921653944156,
+      "resilience": 0.912,
+      "failure_size": 88
     }
   },
   "varying_topology": {
     "scale_free": {
-      "resilience": 0.886,
-      "failure_size": 57,
+      "resilience": 0.896,
+      "failure_size": 52,
       "cascade_steps": 5
     },
     "small_world": {
@@ -65,36 +65,36 @@
       "cascade_steps": 1
     },
     "random": {
-      "resilience": 0.0020000000000000018,
-      "failure_size": 499,
+      "resilience": 0.008000000000000007,
+      "failure_size": 496,
       "cascade_steps": 3
     },
     "clustered": {
-      "resilience": 0.04400000000000004,
-      "failure_size": 478,
+      "resilience": 0.028000000000000025,
+      "failure_size": 486,
       "cascade_steps": 3
     }
   },
   "varying_noise": {
     "0.0": {
-      "resilience": 0.894,
-      "failure_size": 53
+      "resilience": 0.874,
+      "failure_size": 63
     },
     "0.05": {
-      "resilience": 0.884,
-      "failure_size": 58
+      "resilience": 0.89,
+      "failure_size": 55
     },
     "0.1": {
-      "resilience": 0.902,
-      "failure_size": 49
+      "resilience": 0.874,
+      "failure_size": 63
     },
     "0.15": {
-      "resilience": 0.87,
-      "failure_size": 65
+      "resilience": 0.868,
+      "failure_size": 66
     },
     "0.2": {
-      "resilience": 0.902,
-      "failure_size": 49
+      "resilience": 0.854,
+      "failure_size": 73
     }
   }
 }

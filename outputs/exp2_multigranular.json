@@ -2,51 +2,51 @@
   "networks": {
     "scale_free": {
       "node_edge_consistency": {
-        "mean": 0.15828689370485036,
-        "std": 0.08773665982652921
+        "mean": 0.15927604250360552,
+        "std": 0.0571642832162012
       },
       "edge_subgraph_consistency": {
-        "mean": 0.04251100807292689,
-        "std": 0.015687079821619876
+        "mean": 0.2949008697530294,
+        "std": 0.07497021918473844
       },
       "node_subgraph_consistency": {
-        "mean": 0.09025674334406272,
-        "std": 0.035031896451636
+        "mean": 0.09539581229508051,
+        "std": 0.022850413922116054
       },
-      "num_important_edges": 3.0,
-      "subgraph_sizes": 117.8
+      "num_important_edges": 41.7,
+      "subgraph_sizes": 109.7
     },
     "small_world": {
       "node_edge_consistency": {
-        "mean": 0.06477124183006536,
-        "std": 0.10710759261722694
+        "mean": 0.0,
+        "std": 0.0
       },
       "edge_subgraph_consistency": {
-        "mean": 0.1548957460830926,
-        "std": 0.07570431253639387
+        "mean": 0.3596755587530667,
+        "std": 0.05975766317111194
       },
       "node_subgraph_consistency": {
-        "mean": 0.1062903667214012,
-        "std": 0.17214851406049514
+        "mean": 0.0024877149877149877,
+        "std": 0.007494046298020343
       },
-      "num_important_edges": 3.0,
-      "subgraph_sizes": 20.25
+      "num_important_edges": 5.7,
+      "subgraph_sizes": 20.05
     },
     "random": {
       "node_edge_consistency": {
-        "mean": 0.08361455108359134,
-        "std": 0.04961213363665394
+        "mean": 0.024585459399224303,
+        "std": 0.034907069752725214
       },
       "edge_subgraph_consistency": {
-        "mean": 0.012026596047323573,
-        "std": 0.002679311935263158
+        "mean": 0.14518496783821216,
+        "std": 0.011729757091980151
       },
       "node_subgraph_consistency": {
-        "mean": 0.03139264503822434,
-        "std": 0.0031422611031262215
+        "mean": 0.028670403248412125,
+        "std": 0.006598471458012524
       },
-      "num_important_edges": 3.0,
-      "subgraph_sizes": 360.95
+      "num_important_edges": 50.0,
+      "subgraph_sizes": 363.95
     }
   }
 }

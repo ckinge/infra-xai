@@ -275,9 +275,13 @@ class InfrastructureDataLoader:
         if labels is None:
             labels = self.compute_criticality_labels(G)
 
-        edge_index = torch.tensor(
-            [[e[0], e[1]] for e in G.edges()], dtype=torch.long
-        ).t().contiguous()
+        # 构建无向边索引（显式添加反向边）
+        # 基础设施网络（电网、通信网）的物理连接是双向的
+        edges = []
+        for u, v in G.edges():
+            edges.append([u, v])
+            edges.append([v, u])  # 反向边，确保消息双向传播
+        edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
 
         data = Data(
             x=torch.tensor(features, dtype=torch.float),
