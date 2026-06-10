@@ -57,12 +57,13 @@ class NodeLevelExplainer:
         node_score = torch.zeros(data.num_nodes)
 
         # 聚合连接到每个节点的边重要性
+        # 无向基础设施网络已包含双向边，两端权重相等
         for e in range(data.edge_index.shape[1]):
             src = data.edge_index[0, e].item()
             dst = data.edge_index[1, e].item()
             score = edge_mask[e].item()
             node_score[src] += score
-            node_score[dst] += score / 2.0  # 入边权重减半
+            node_score[dst] += score
 
         _, indices = torch.sort(node_score, descending=True)
         return indices[:top_k]
@@ -132,6 +133,8 @@ class SubgraphExplainer:
         for u, v in G.edges():
             if u in node_to_idx and v in node_to_idx:
                 sub_edges.append([node_to_idx[u], node_to_idx[v]])
+                if u != v:
+                    sub_edges.append([node_to_idx[v], node_to_idx[u]])
 
         if len(sub_edges) == 0:
             sub_edge_index = torch.zeros((2, 0), dtype=torch.long)
