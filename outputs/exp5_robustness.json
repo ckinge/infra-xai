@@ -1,0 +1,100 @@
+{
+  "varying_failure_ratios": {
+    "0.01": {
+      "mean_failure_size": 13.8,
+      "std_failure_size": 11.070682002478438,
+      "mean_resilience": 0.9724
+    },
+    "0.03": {
+      "mean_failure_size": 40.8,
+      "std_failure_size": 2.315167380558045,
+      "mean_resilience": 0.9184000000000001
+    },
+    "0.05": {
+      "mean_failure_size": 57.0,
+      "std_failure_size": 2.0976176963403033,
+      "mean_resilience": 0.8860000000000001
+    },
+    "0.1": {
+      "mean_failure_size": 83.2,
+      "std_failure_size": 1.16619037896906,
+      "mean_resilience": 0.8336
+    },
+    "0.15": {
+      "mean_failure_size": 116.8,
+      "std_failure_size": 3.9191835884530852,
+      "mean_resilience": 0.7664
+    },
+    "0.2": {
+      "mean_failure_size": 139.6,
+      "std_failure_size": 8.16333265278342,
+      "mean_resilience": 0.7208
+    }
+  },
+  "varying_network_size": {
+    "100": {
+      "fidelity": 0.3241720171772613,
+      "resilience": 0.87,
+      "failure_size": 13
+    },
+    "200": {
+      "fidelity": 0.7632649220933672,
+      "resilience": 0.91,
+      "failure_size": 18
+    },
+    "500": {
+      "fidelity": 0.2926442554569803,
+      "resilience": 0.904,
+      "failure_size": 48
+    },
+    "1000": {
+      "fidelity": 0.2432981314137578,
+      "resilience": 0.899,
+      "failure_size": 101
+    }
+  },
+  "varying_topology": {
+    "scale_free": {
+      "resilience": 0.886,
+      "failure_size": 57,
+      "cascade_steps": 5
+    },
+    "small_world": {
+      "resilience": 0.95,
+      "failure_size": 25,
+      "cascade_steps": 1
+    },
+    "random": {
+      "resilience": 0.0020000000000000018,
+      "failure_size": 499,
+      "cascade_steps": 3
+    },
+    "clustered": {
+      "resilience": 0.04400000000000004,
+      "failure_size": 478,
+      "cascade_steps": 3
+    }
+  },
+  "varying_noise": {
+    "0.0": {
+      "resilience": 0.894,
+      "failure_size": 53
+    },
+    "0.05": {
+      "resilience": 0.884,
+      "failure_size": 58
+    },
+    "0.1": {
+      "resilience": 0.902,
+      "failure_size": 49
+    },
+    "0.15": {
+      "resilience": 0.87,
+      "failure_size": 65
+    },
+    "0.2": {
+      "resilience": 0.902,
+      "failure_size": 49
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "scale_free": {
+    "baseline_size": 77,
+    "budget": 5,
+    "init_ratio": 0.1,
+    "strategies": {
+      "explainability": {
+        "nodes": [
+          0,
+          2,
+          3,
+          1,
+          5
+        ],
+        "final_failed": 76,
+        "risk_reduction": 0.012987012987012988,
+        "resilience_gain": 0.0020000000000000018
+      },
+      "topology": {
+        "nodes": [
+          0,
+          5,
+          2,
+          4,
+          3
+        ],
+        "final_failed": 77,
+        "risk_reduction": 0.0,
+        "resilience_gain": 0.0
+      },
+      "random": {
+        "nodes": [
+          306,
+          449,
+          123,
+          194,
+          66
+        ],
+        "final_failed": 77,
+        "risk_reduction": 0.0,
+        "resilience_gain": 0.0
+      }
+    }
+  },
+  "small_world": {
+    "baseline_size": 50,
+    "budget": 5,
+    "init_ratio": 0.1,
+    "strategies": {
+      "explainability": {
+        "nodes": [
+          0,
+          32,
+          419,
+          111,
+          90
+        ],
+        "final_failed": 50,
+        "risk_reduction": 0.0,
+        "resilience_gain": 0.0
+      },
+      "topology": {
+        "nodes": [
+          124,
+          228,
+          90,
+          4,
+          111
+        ],
+        "final_failed": 50,
+        "risk_reduction": 0.0,
+        "resilience_gain": 0.0
+      },
+      "random": {
+        "nodes": [
+          306,
+          449,
+          123,
+          194,
+          66
+        ],
+        "final_failed": 50,
+        "risk_reduction": 0.0,
+        "resilience_gain": 0.0
+      }
+    }
+  }
+}

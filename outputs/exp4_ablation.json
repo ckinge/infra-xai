@@ -1,0 +1,30 @@
+{
+  "full_model": {
+    "fidelity_mean": 0.6335132118877179,
+    "fidelity_std": 0.4528496779749237,
+    "num_components": 3,
+    "cross_granularity_consistency": 0.0
+  },
+  "no_multi_granular": {
+    "fidelity_mean": 0.6335132118877179,
+    "fidelity_std": 0.4528496779749237,
+    "num_components": 2
+  },
+  "no_fusion": {
+    "fidelity_mean": 0.6335132118877179,
+    "fidelity_std": 0.4528496779749237,
+    "num_components": 2,
+    "cross_granularity_consistency": 0.0
+  },
+  "no_trust": {
+    "fidelity_mean": 0.6335132118877179,
+    "fidelity_std": 0.4528496779749237,
+    "num_components": 2,
+    "cross_granularity_consistency": 0.0
+  },
+  "gcnn_only": {
+    "fidelity_mean": 0.6335132118877179,
+    "fidelity_std": 0.4528496779749237,
+    "num_components": 0
+  }
+}

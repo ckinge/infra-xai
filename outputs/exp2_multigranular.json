@@ -1,0 +1,52 @@
+{
+  "networks": {
+    "scale_free": {
+      "node_edge_consistency": {
+        "mean": 0.15828689370485036,
+        "std": 0.08773665982652921
+      },
+      "edge_subgraph_consistency": {
+        "mean": 0.04251100807292689,
+        "std": 0.015687079821619876
+      },
+      "node_subgraph_consistency": {
+        "mean": 0.09025674334406272,
+        "std": 0.035031896451636
+      },
+      "num_important_edges": 3.0,
+      "subgraph_sizes": 117.8
+    },
+    "small_world": {
+      "node_edge_consistency": {
+        "mean": 0.06477124183006536,
+        "std": 0.10710759261722694
+      },
+      "edge_subgraph_consistency": {
+        "mean": 0.1548957460830926,
+        "std": 0.07570431253639387
+      },
+      "node_subgraph_consistency": {
+        "mean": 0.1062903667214012,
+        "std": 0.17214851406049514
+      },
+      "num_important_edges": 3.0,
+      "subgraph_sizes": 20.25
+    },
+    "random": {
+      "node_edge_consistency": {
+        "mean": 0.08361455108359134,
+        "std": 0.04961213363665394
+      },
+      "edge_subgraph_consistency": {
+        "mean": 0.012026596047323573,
+        "std": 0.002679311935263158
+      },
+      "node_subgraph_consistency": {
+        "mean": 0.03139264503822434,
+        "std": 0.0031422611031262215
+      },
+      "num_important_edges": 3.0,
+      "subgraph_sizes": 360.95
+    }
+  }
+}
