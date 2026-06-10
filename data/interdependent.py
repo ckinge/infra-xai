@@ -80,6 +80,143 @@ class InterdependentNetworkBuilder:
 
         return G_a, G_b, dependencies
 
+    def _compute_interdependent_labels(
+        self,
+        G_a: nx.Graph,
+        G_b: nx.Graph,
+        dependencies: List[Tuple[int, int]],
+        loader,
+    ) -> np.ndarray:
+        """
+        使用相互依赖级联模拟生成关键性标签。
+
+        对每个节点（A和B共计 N_a+N_b 个），从耦合网络中移除该节点，
+        然后在相同初始故障集下运行相互依赖级联模拟。
+        标签 = 移除该节点后级联总规模的增幅，按百分位数分三档。
+        """
+        N_a = G_a.number_of_nodes()
+        N_b = G_b.number_of_nodes()
+        N_total = N_a + N_b
+
+        np.random.seed(42)
+        n_init = max(1, int(N_a * 0.05))
+        init_fails = [int(x) for x in np.random.choice(N_a, n_init, replace=False)]
+
+        # 构建依赖映射
+        a_to_b = {}
+        b_to_a = {}
+        for a, b in dependencies:
+            a_to_b.setdefault(a, []).append(b)
+            b_to_a.setdefault(b, []).append(a)
+
+        def _coupled_cascade(Ga, Gb, removed_node=None):
+            """运行一次相互依赖级联，返回总故障节点数"""
+            # 构建容量
+            caps_a, caps_b = {}, {}
+            loads_a, loads_b = {}, {}
+            for n in Ga.nodes():
+                nb = list(Ga.neighbors(n))
+                d = len(nb)
+                nd = sum(len(list(Ga.neighbors(x))) for x in nb) if nb else 0
+                loads_a[n] = float(d + 0.1 * nd)
+                caps_a[n] = loads_a[n] * 1.5
+            for n in Gb.nodes():
+                nb = list(Gb.neighbors(n))
+                d = len(nb)
+                nd = sum(len(list(Gb.neighbors(x))) for x in nb) if nb else 0
+                loads_b[n] = float(d + 0.1 * nd)
+                caps_b[n] = loads_b[n] * 1.5
+
+            # 如果指定了移除节点，从对应网络中删除
+            failed_a = set(init_fails)
+            failed_b = set()
+            if removed_node is not None:
+                if removed_node < N_a:
+                    if removed_node in Ga.nodes():
+                        Ga = Ga.copy()
+                        Ga.remove_node(removed_node)
+                    failed_a.discard(removed_node)
+                else:
+                    b_node = removed_node - N_a
+                    if b_node in Gb.nodes():
+                        Gb = Gb.copy()
+                        Gb.remove_node(b_node)
+
+            active_fails_a = [n for n in init_fails if n in Ga.nodes()]
+            failed_a = set(active_fails_a) if removed_node is None or removed_node >= N_a else set(active_fails_a)
+            if removed_node is not None and removed_node < N_a and removed_node in failed_a:
+                failed_a.discard(removed_node)
+
+            for _ in range(20):
+                nf_a, nf_b = set(), set()
+
+                active_a = set(Ga.nodes()) - failed_a
+                if len(active_a) > 1:
+                    sub = Ga.subgraph(active_a)
+                    for n in active_a:
+                        nb = list(sub.neighbors(n))
+                        d = len(nb)
+                        nd = sum(len(list(sub.neighbors(x))) for x in nb) if nb else 0
+                        fn = sum(1 for x in Ga.neighbors(n) if x in failed_a)
+                        cur = float(d + 0.1 * nd) * (1.0 + 0.5 * fn)
+                        if cur > caps_a.get(n, 1.0):
+                            nf_a.add(n)
+
+                active_b = set(Gb.nodes()) - failed_b
+                if len(active_b) > 1:
+                    sub = Gb.subgraph(active_b)
+                    for n in active_b:
+                        nb = list(sub.neighbors(n))
+                        d = len(nb)
+                        nd = sum(len(list(sub.neighbors(x))) for x in nb) if nb else 0
+                        fn = sum(1 for x in Gb.neighbors(n) if x in failed_b)
+                        cur = float(d + 0.1 * nd) * (1.0 + 0.5 * fn)
+                        if cur > caps_b.get(n, 1.0):
+                            nf_b.add(n)
+
+                # 跨网络传播
+                for a_node in nf_a:
+                    if a_node in a_to_b:
+                        for b_node in a_to_b[a_node]:
+                            if b_node not in failed_b:
+                                nf_b.add(b_node)
+                for b_node in nf_b:
+                    if b_node in b_to_a:
+                        for a_node in b_to_a[b_node]:
+                            if a_node not in failed_a:
+                                nf_a.add(a_node)
+
+                if not nf_a and not nf_b:
+                    break
+                failed_a.update(nf_a)
+                failed_b.update(nf_b)
+
+            total_failed = len(failed_a) + len(failed_b)
+            return total_failed
+
+        # 基线级联
+        baseline_total = _coupled_cascade(G_a, G_b, removed_node=None)
+
+        # 逐节点移除
+        criticality = np.zeros(N_total)
+        for i in range(N_total):
+            total = _coupled_cascade(G_a, G_b, removed_node=i)
+            score = max(0.0, (total - baseline_total) / max(N_total, 1))
+            criticality[i] = score
+
+        # 百分位数分三档
+        p33 = np.percentile(criticality, 33.33)
+        p67 = np.percentile(criticality, 66.67)
+        discrete = np.zeros(N_total, dtype=np.int64)
+        if p67 > p33:
+            discrete[criticality < p33] = 2
+            discrete[(criticality >= p33) & (criticality < p67)] = 1
+            discrete[criticality >= p67] = 0
+        else:
+            for i in range(N_total):
+                discrete[i] = i % 3
+        return discrete
+
     def build_coupled_pyg_data(
         self,
         G_a: nx.Graph,
@@ -107,20 +244,32 @@ class InterdependentNetworkBuilder:
         # 偏移 B 的节点索引
         edges = []
 
+        def add_edge(u: int, v: int, edge_type_id: int):
+            """Add a physical/dependency relation as bidirectional message edges."""
+            edges.append([u, v, edge_type_id])
+            if u != v:
+                edges.append([v, u, edge_type_id])
+
         # A内部边
         for u, v in G_a.edges():
-            edges.append([u, v, 0])  # type 0 = intra-A
+            add_edge(u, v, 0)  # type 0 = intra-A
 
         # B内部边（偏移 N_a）
         for u, v in G_b.edges():
-            edges.append([u + N_a, v + N_a, 1])  # type 1 = intra-B
+            add_edge(u + N_a, v + N_a, 1)  # type 1 = intra-B
 
-        # 依赖边 (A→B)
+        # 依赖边 (A↔B)
         for a, b in dependencies:
-            edges.append([a, b + N_a, 2])  # type 2 = dependency
+            add_edge(a, b + N_a, 2)  # type 2 = dependency
 
-        edge_index = torch.tensor([[e[0], e[1]] for e in edges], dtype=torch.long).t()
-        edge_type = torch.tensor([e[2] for e in edges], dtype=torch.long)
+        if edges:
+            edge_index = torch.tensor(
+                [[e[0], e[1]] for e in edges], dtype=torch.long
+            ).t().contiguous()
+            edge_type = torch.tensor([e[2] for e in edges], dtype=torch.long)
+        else:
+            edge_index = torch.zeros((2, 0), dtype=torch.long)
+            edge_type = torch.zeros((0,), dtype=torch.long)
 
         # 节点特征
         feat_a = loader.compute_node_features(G_a)
@@ -129,12 +278,12 @@ class InterdependentNetworkBuilder:
             np.vstack([feat_a, feat_b]), dtype=torch.float
         )
 
-        # 节点标签
-        labels_a = loader.compute_criticality_labels(G_a)
-        labels_b = loader.compute_criticality_labels(G_b)
-        y = torch.tensor(
-            np.concatenate([labels_a, labels_b]), dtype=torch.long
+        # 节点标签 —— 使用相互依赖级联模拟标签
+        # 标签反映的是"移除该节点后，在耦合系统中引发的总级联规模增幅"
+        labels = self._compute_interdependent_labels(
+            G_a, G_b, dependencies, loader
         )
+        y = torch.tensor(labels, dtype=torch.long)
 
         # 网络归属标签
         network_label = torch.zeros(N_total, dtype=torch.long)
