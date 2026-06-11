@@ -1,10 +1,10 @@
 {
   "Power\u2194Communication (SF-SF)": {
-    "accuracy": 0.9333333373069763,
+    "accuracy": 0.34166666865348816,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.47036136689566777,
-        "fidelity_std": 0.444386212042756
+        "fidelity_mean": 0.39519056025892496,
+        "fidelity_std": 0.11982603618740058
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -15,32 +15,32 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 99,
+    "cascade_size": 94,
     "cross_propagation": true,
-    "resilience": 0.835,
+    "resilience": 0.8433333333333333,
     "counterfactual": {
       "explain": {
-        "reduction": 0.010101010101010102,
-        "final_total": 98
+        "reduction": 0.0,
+        "final_total": 94
       },
       "topology": {
-        "reduction": 0.010101010101010102,
-        "final_total": 98
+        "reduction": -0.05319148936170213,
+        "final_total": 99
       },
       "random": {
         "reduction": 0.0,
-        "final_total": 99
+        "final_total": 94
       }
     },
-    "fusion_a": 0.6666666666666666,
-    "fusion_b": 0.6666666666666666
+    "fusion_a": 0.0,
+    "fusion_b": 0.0
   },
   "Power\u2194Transport (SF-SW)": {
-    "accuracy": 0.7583333253860474,
+    "accuracy": 0.3166666626930237,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.5298159816826228,
-        "fidelity_std": 0.386573642046216
+        "fidelity_mean": 0.29121907078661025,
+        "fidelity_std": 0.19281602598814346
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -51,24 +51,24 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 64,
+    "cascade_size": 56,
     "cross_propagation": true,
-    "resilience": 0.8933333333333333,
+    "resilience": 0.9066666666666666,
     "counterfactual": {
       "explain": {
-        "reduction": 0.078125,
-        "final_total": 59
+        "reduction": 0.0,
+        "final_total": 56
       },
       "topology": {
-        "reduction": 0.015625,
-        "final_total": 63
+        "reduction": -0.08928571428571429,
+        "final_total": 61
       },
       "random": {
         "reduction": 0.0,
-        "final_total": 64
+        "final_total": 56
       }
     },
-    "fusion_a": 0.3333333333333333,
-    "fusion_b": 0.17647058823529413
+    "fusion_a": 0.0,
+    "fusion_b": 0.0
   }
 }
