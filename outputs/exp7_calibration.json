@@ -1,0 +1,137 @@
+{
+  "scale_free": {
+    "ece": 0.055586048960685766,
+    "brier": 0.06272418057994135,
+    "accuracy": 0.86,
+    "high_uncertainty_error_rate": 0.16666666666666666,
+    "low_uncertainty_error_rate": 0.0,
+    "error_discrimination_ratio": 166666.66666666666,
+    "uncertainty_error_correlation": 0.23433356210043974,
+    "reliability_bins": [
+      {
+        "center": 0.45,
+        "acc": 0.0,
+        "conf": 0.4983392655849457,
+        "size": 2
+      },
+      {
+        "center": 0.55,
+        "acc": 0.5,
+        "conf": 0.513514518737793,
+        "size": 4
+      },
+      {
+        "center": 0.6500000000000001,
+        "acc": 0.8,
+        "conf": 0.6443427801132202,
+        "size": 10
+      },
+      {
+        "center": 0.75,
+        "acc": 0.6666666666666666,
+        "conf": 0.7501497268676758,
+        "size": 12
+      },
+      {
+        "center": 0.8500000000000001,
+        "acc": 0.7692307692307693,
+        "conf": 0.857803463935852,
+        "size": 13
+      },
+      {
+        "center": 0.95,
+        "acc": 0.9830508474576272,
+        "conf": 0.9695245027542114,
+        "size": 59
+      }
+    ]
+  },
+  "small_world": {
+    "ece": 0.07092962890863422,
+    "brier": 0.12426420829348757,
+    "accuracy": 0.72,
+    "high_uncertainty_error_rate": 0.06666666666666667,
+    "low_uncertainty_error_rate": 0.36666666666666664,
+    "error_discrimination_ratio": 0.18181818181818182,
+    "uncertainty_error_correlation": -0.27880668280163967,
+    "reliability_bins": [
+      {
+        "center": 0.45,
+        "acc": 0.0,
+        "conf": 0.45701733231544495,
+        "size": 3
+      },
+      {
+        "center": 0.55,
+        "acc": 0.5,
+        "conf": 0.5374224185943604,
+        "size": 16
+      },
+      {
+        "center": 0.6500000000000001,
+        "acc": 0.6,
+        "conf": 0.6446234583854675,
+        "size": 15
+      },
+      {
+        "center": 0.75,
+        "acc": 0.65,
+        "conf": 0.7480977773666382,
+        "size": 20
+      },
+      {
+        "center": 0.8500000000000001,
+        "acc": 0.6666666666666666,
+        "conf": 0.85797518491745,
+        "size": 6
+      },
+      {
+        "center": 0.95,
+        "acc": 0.95,
+        "conf": 0.983599841594696,
+        "size": 40
+      }
+    ]
+  },
+  "random": {
+    "ece": 0.017295095920562744,
+    "brier": 0.007366864574065022,
+    "accuracy": 0.98,
+    "high_uncertainty_error_rate": 0.06666666666666667,
+    "low_uncertainty_error_rate": 0.0,
+    "error_discrimination_ratio": 66666.66666666667,
+    "uncertainty_error_correlation": 0.12624167741815012,
+    "reliability_bins": [
+      {
+        "center": 0.55,
+        "acc": 0.5,
+        "conf": 0.5516567230224609,
+        "size": 2
+      },
+      {
+        "center": 0.6500000000000001,
+        "acc": 0.5,
+        "conf": 0.6531563997268677,
+        "size": 2
+      },
+      {
+        "center": 0.75,
+        "acc": 1.0,
+        "conf": 0.7386717200279236,
+        "size": 1
+      },
+      {
+        "center": 0.8500000000000001,
+        "acc": 1.0,
+        "conf": 0.8789907097816467,
+        "size": 4
+      },
+      {
+        "center": 0.95,
+        "acc": 1.0,
+        "conf": 0.9936866164207458,
+        "size": 91
+      }
+    ]
+  }
+}
