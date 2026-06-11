@@ -90,28 +90,26 @@ def evaluate_explanation_fidelity(
     top_k: int = 20,
 ) -> float:
     """
-    评估解释的忠实度（手动计算，更可靠）
-
-    方法: 移除 Top-K 最重要的边，观察目标节点预测概率的变化
-    Fidelity = 原始正确类概率 - 移除重要边后的正确类概率
-    正值表示重要边确实影响预测（越高越好）
+    Evaluate explanation fidelity via predicted-class probability drop.
+    This is the standard XAI definition:
+      Fidelity = Pr(predicted class | original graph) - Pr(predicted class | masked graph)
+    Positive value = removing important edges reduces confidence in the predicted class.
+    Signed fidelity is reported (not clipped to 0), so negative values indicate cases
+    where edge removal paradoxically *increases* confidence.
     """
     model.eval()
     device = next(model.parameters()).device
 
-    # 原始预测
     with torch.no_grad():
         orig_out = model(data.x.to(device), data.edge_index.to(device))
         orig_prob = orig_out[index].softmax(dim=-1)
-        orig_class = orig_prob.argmax().item()
-        orig_conf = orig_prob[orig_class].item()
+        pred_class = orig_prob.argmax().item()
+        orig_conf = orig_prob[pred_class].item()
 
-    # 获取边重要性（可能是 edge_mask 或 node_mask 或 None）
     edge_mask = None
     if hasattr(explanation, 'edge_mask') and explanation.edge_mask is not None:
         edge_mask = explanation.edge_mask
     elif hasattr(explanation, 'node_mask') and explanation.node_mask is not None:
-        # 如果没有 edge_mask，从 node_mask 近似边重要性
         nm = explanation.node_mask
         if nm.dim() > 1:
             nm = nm.sum(dim=-1)
@@ -121,27 +119,35 @@ def evaluate_explanation_fidelity(
             edge_mask[e] = (nm[src].abs() + nm[dst].abs()) / 2.0
 
     if edge_mask is None or edge_mask.abs().sum() < 1e-10:
-        # 退化为度数基线
         deg = torch.zeros(data.num_nodes, device=device)
         for e in range(data.edge_index.shape[1]):
             deg[data.edge_index[0, e]] += 1
         edge_mask = deg[data.edge_index[0]] + deg[data.edge_index[1]]
 
-    # 移除 Top-K 最重要的边
     _, top_indices = torch.topk(edge_mask.abs(), min(top_k, len(edge_mask)))
     keep_mask = torch.ones(data.edge_index.shape[1], dtype=torch.bool, device=device)
     keep_mask[top_indices] = False
     masked_edge_index = data.edge_index[:, keep_mask].to(device)
 
-    # 移除边后的预测
     with torch.no_grad():
         masked_out = model(data.x.to(device), masked_edge_index)
         masked_prob = masked_out[index].softmax(dim=-1)
-        masked_conf = masked_prob[orig_class].item()
+        masked_conf = masked_prob[pred_class].item()
 
-    # 忠实度 = 置信度下降幅度
-    fidelity = orig_conf - masked_conf
-    return max(0.0, fidelity)  # 裁掉负值（边移除反而增加置信度的情况）
+    return orig_conf - masked_conf  # signed fidelity, no clipping
+
+
+def fidelity_summary(fidelities: list) -> dict:
+    """Compute aggregate fidelity statistics from per-node values."""
+    import numpy as np
+    arr = np.array(fidelities)
+    return {
+        'mean_signed': float(np.mean(arr)),
+        'positive_rate': float((arr > 0).mean()),
+        'median': float(np.median(arr)),
+        'iqr': float(np.percentile(arr, 75) - np.percentile(arr, 25)),
+        'std': float(np.std(arr)),
+    }
 
 
 def evaluate_explanation_sparsity(explanation: Any, top_k: int = 30) -> float:
