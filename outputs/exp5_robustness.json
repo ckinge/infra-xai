@@ -1,62 +1,62 @@
 {
   "varying_failure_ratios": {
     "0.01": {
-      "mean_failure_size": 13.6,
-      "std_failure_size": 10.150862032359615,
-      "mean_resilience": 0.9728
+      "mean_failure_size": 10.6,
+      "std_failure_size": 11.2,
+      "mean_resilience": 0.9788
     },
     "0.03": {
-      "mean_failure_size": 43.0,
-      "std_failure_size": 2.6076809620810595,
-      "mean_resilience": 0.914
+      "mean_failure_size": 42.8,
+      "std_failure_size": 2.9257477676655586,
+      "mean_resilience": 0.9144
     },
     "0.05": {
-      "mean_failure_size": 56.2,
+      "mean_failure_size": 52.2,
       "std_failure_size": 1.7204650534085253,
-      "mean_resilience": 0.8876
+      "mean_resilience": 0.8956000000000002
     },
     "0.1": {
-      "mean_failure_size": 85.0,
-      "std_failure_size": 3.286335345030997,
-      "mean_resilience": 0.8299999999999998
+      "mean_failure_size": 83.0,
+      "std_failure_size": 3.847076812334269,
+      "mean_resilience": 0.834
     },
     "0.15": {
-      "mean_failure_size": 119.2,
-      "std_failure_size": 2.4819347291981715,
-      "mean_resilience": 0.7616000000000002
+      "mean_failure_size": 112.6,
+      "std_failure_size": 6.829348431585549,
+      "mean_resilience": 0.7748
     },
     "0.2": {
-      "mean_failure_size": 145.2,
-      "std_failure_size": 4.069397989875161,
-      "mean_resilience": 0.7096
+      "mean_failure_size": 138.0,
+      "std_failure_size": 8.148619514985345,
+      "mean_resilience": 0.724
     }
   },
   "varying_network_size": {
     "100": {
-      "fidelity": 0.6343220902558642,
-      "resilience": 0.8200000000000001,
-      "failure_size": 18
+      "fidelity": 0.37520656615961345,
+      "resilience": 0.88,
+      "failure_size": 12
     },
     "200": {
-      "fidelity": 0.15571609046855883,
-      "resilience": 0.87,
-      "failure_size": 26
+      "fidelity": 0.35375136956572534,
+      "resilience": 0.885,
+      "failure_size": 23
     },
     "500": {
-      "fidelity": 8.701980113983155e-05,
-      "resilience": 0.904,
-      "failure_size": 48
+      "fidelity": 0.19946227371692657,
+      "resilience": 0.9,
+      "failure_size": 50
     },
     "1000": {
-      "fidelity": 0.14091921653944156,
-      "resilience": 0.912,
-      "failure_size": 88
+      "fidelity": 0.17580646872520447,
+      "resilience": 0.904,
+      "failure_size": 96
     }
   },
   "varying_topology": {
     "scale_free": {
-      "resilience": 0.896,
-      "failure_size": 52,
+      "resilience": 0.894,
+      "failure_size": 53,
       "cascade_steps": 5
     },
     "small_world": {
@@ -65,36 +65,36 @@
       "cascade_steps": 1
     },
     "random": {
-      "resilience": 0.008000000000000007,
-      "failure_size": 496,
+      "resilience": 0.0040000000000000036,
+      "failure_size": 498,
       "cascade_steps": 3
     },
     "clustered": {
-      "resilience": 0.028000000000000025,
-      "failure_size": 486,
+      "resilience": 0.06999999999999995,
+      "failure_size": 465,
       "cascade_steps": 3
     }
   },
   "varying_noise": {
     "0.0": {
-      "resilience": 0.874,
-      "failure_size": 63
+      "resilience": 0.888,
+      "failure_size": 56
     },
     "0.05": {
-      "resilience": 0.89,
-      "failure_size": 55
+      "resilience": 0.876,
+      "failure_size": 62
     },
     "0.1": {
-      "resilience": 0.874,
-      "failure_size": 63
+      "resilience": 0.882,
+      "failure_size": 59
     },
     "0.15": {
-      "resilience": 0.868,
-      "failure_size": 66
+      "resilience": 0.876,
+      "failure_size": 62
     },
     "0.2": {
-      "resilience": 0.854,
-      "failure_size": 73
+      "resilience": 0.874,
+      "failure_size": 63
     }
   }
 }

@@ -1,10 +1,10 @@
 {
   "Power\u2194Communication (SF-SF)": {
-    "accuracy": 0.34166666865348816,
+    "accuracy": 0.42500001192092896,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.39519056025892496,
-        "fidelity_std": 0.11982603618740058
+        "fidelity_mean": 0.15655758008360862,
+        "fidelity_std": 0.17412777672384558
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -15,32 +15,32 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 94,
+    "cascade_size": 91,
     "cross_propagation": true,
-    "resilience": 0.8433333333333333,
+    "resilience": 0.8483333333333334,
     "counterfactual": {
       "explain": {
         "reduction": 0.0,
-        "final_total": 94
+        "final_total": 91
       },
       "topology": {
-        "reduction": -0.05319148936170213,
-        "final_total": 99
+        "reduction": -0.054945054945054944,
+        "final_total": 96
       },
       "random": {
         "reduction": 0.0,
-        "final_total": 94
+        "final_total": 91
       }
     },
     "fusion_a": 0.0,
     "fusion_b": 0.0
   },
   "Power\u2194Transport (SF-SW)": {
-    "accuracy": 0.3166666626930237,
+    "accuracy": 0.30000001192092896,
     "xai": {
       "GNNExplainer": {
-        "fidelity_mean": 0.29121907078661025,
-        "fidelity_std": 0.19281602598814346
+        "fidelity_mean": 0.226603963971138,
+        "fidelity_std": 0.15918221034143637
       },
       "Degree": {
         "fidelity_mean": 0,
@@ -51,21 +51,21 @@
         "fidelity_std": 0
       }
     },
-    "cascade_size": 56,
+    "cascade_size": 69,
     "cross_propagation": true,
-    "resilience": 0.9066666666666666,
+    "resilience": 0.885,
     "counterfactual": {
       "explain": {
-        "reduction": 0.0,
-        "final_total": 56
+        "reduction": 0.014492753623188406,
+        "final_total": 68
       },
       "topology": {
-        "reduction": -0.08928571428571429,
-        "final_total": 61
+        "reduction": 0.057971014492753624,
+        "final_total": 65
       },
       "random": {
         "reduction": 0.0,
-        "final_total": 56
+        "final_total": 69
       }
     },
     "fusion_a": 0.0,
