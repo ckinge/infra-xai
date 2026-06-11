@@ -85,14 +85,13 @@ class InterdependentNetworkBuilder:
         G_a: nx.Graph,
         G_b: nx.Graph,
         dependencies: List[Tuple[int, int]],
-        loader,
     ) -> np.ndarray:
         """
         使用相互依赖级联模拟生成关键性标签。
 
         对每个节点（A和B共计 N_a+N_b 个），从耦合网络中移除该节点，
         然后在相同初始故障集下运行相互依赖级联模拟。
-        标签 = 移除该节点后级联总规模的增幅，按百分位数分三档。
+        标签 = 移除该节点后剩余耦合系统的级联规模增幅，按百分位数分三档。
         """
         N_a = G_a.number_of_nodes()
         N_b = G_b.number_of_nodes()
@@ -102,105 +101,60 @@ class InterdependentNetworkBuilder:
         n_init = max(1, int(N_a * 0.05))
         init_fails = [int(x) for x in np.random.choice(N_a, n_init, replace=False)]
 
-        # 构建依赖映射
-        a_to_b = {}
-        b_to_a = {}
-        for a, b in dependencies:
-            a_to_b.setdefault(a, []).append(b)
-            b_to_a.setdefault(b, []).append(a)
+        def make_sim_data(
+            Ga: nx.Graph, Gb: nx.Graph, deps: List[Tuple[int, int]]
+        ) -> Data:
+            sim_data = Data(num_nodes=N_total)
+            sim_data.nx_graph_a = Ga
+            sim_data.nx_graph_b = Gb
+            sim_data.dependencies = deps
+            sim_data.n_a = N_a
+            sim_data.n_b = N_b
+            return sim_data
 
-        def _coupled_cascade(Ga, Gb, removed_node=None):
-            """运行一次相互依赖级联，返回总故障节点数"""
-            # 构建容量
-            caps_a, caps_b = {}, {}
-            loads_a, loads_b = {}, {}
-            for n in Ga.nodes():
-                nb = list(Ga.neighbors(n))
-                d = len(nb)
-                nd = sum(len(list(Ga.neighbors(x))) for x in nb) if nb else 0
-                loads_a[n] = float(d + 0.1 * nd)
-                caps_a[n] = loads_a[n] * 1.5
-            for n in Gb.nodes():
-                nb = list(Gb.neighbors(n))
-                d = len(nb)
-                nd = sum(len(list(Gb.neighbors(x))) for x in nb) if nb else 0
-                loads_b[n] = float(d + 0.1 * nd)
-                caps_b[n] = loads_b[n] * 1.5
+        def filter_dependencies(
+            deps: List[Tuple[int, int]], Ga: nx.Graph, Gb: nx.Graph
+        ) -> List[Tuple[int, int]]:
+            active_a = set(Ga.nodes())
+            active_b = set(Gb.nodes())
+            return [(a, b) for a, b in deps if a in active_a and b in active_b]
 
-            # 如果指定了移除节点，从对应网络中删除
-            failed_a = set(init_fails)
-            failed_b = set()
-            if removed_node is not None:
-                if removed_node < N_a:
-                    if removed_node in Ga.nodes():
-                        Ga = Ga.copy()
-                        Ga.remove_node(removed_node)
-                    failed_a.discard(removed_node)
-                else:
-                    b_node = removed_node - N_a
-                    if b_node in Gb.nodes():
-                        Gb = Gb.copy()
-                        Gb.remove_node(b_node)
+        def remove_node(
+            node_idx: int,
+        ) -> Tuple[nx.Graph, nx.Graph, List[Tuple[int, int]], List[int]]:
+            Ga = G_a.copy()
+            Gb = G_b.copy()
+            if node_idx < N_a:
+                if node_idx in Ga:
+                    Ga.remove_node(node_idx)
+            else:
+                b_node = node_idx - N_a
+                if b_node in Gb:
+                    Gb.remove_node(b_node)
 
-            active_fails_a = [n for n in init_fails if n in Ga.nodes()]
-            failed_a = set(active_fails_a) if removed_node is None or removed_node >= N_a else set(active_fails_a)
-            if removed_node is not None and removed_node < N_a and removed_node in failed_a:
-                failed_a.discard(removed_node)
+            filtered_deps = filter_dependencies(dependencies, Ga, Gb)
+            filtered_init = [n for n in init_fails if n in Ga.nodes()]
+            return Ga, Gb, filtered_deps, filtered_init
 
-            for _ in range(20):
-                nf_a, nf_b = set(), set()
-
-                active_a = set(Ga.nodes()) - failed_a
-                if len(active_a) > 1:
-                    sub = Ga.subgraph(active_a)
-                    for n in active_a:
-                        nb = list(sub.neighbors(n))
-                        d = len(nb)
-                        nd = sum(len(list(sub.neighbors(x))) for x in nb) if nb else 0
-                        fn = sum(1 for x in Ga.neighbors(n) if x in failed_a)
-                        cur = float(d + 0.1 * nd) * (1.0 + 0.5 * fn)
-                        if cur > caps_a.get(n, 1.0):
-                            nf_a.add(n)
-
-                active_b = set(Gb.nodes()) - failed_b
-                if len(active_b) > 1:
-                    sub = Gb.subgraph(active_b)
-                    for n in active_b:
-                        nb = list(sub.neighbors(n))
-                        d = len(nb)
-                        nd = sum(len(list(sub.neighbors(x))) for x in nb) if nb else 0
-                        fn = sum(1 for x in Gb.neighbors(n) if x in failed_b)
-                        cur = float(d + 0.1 * nd) * (1.0 + 0.5 * fn)
-                        if cur > caps_b.get(n, 1.0):
-                            nf_b.add(n)
-
-                # 跨网络传播
-                for a_node in nf_a:
-                    if a_node in a_to_b:
-                        for b_node in a_to_b[a_node]:
-                            if b_node not in failed_b:
-                                nf_b.add(b_node)
-                for b_node in nf_b:
-                    if b_node in b_to_a:
-                        for a_node in b_to_a[b_node]:
-                            if a_node not in failed_a:
-                                nf_a.add(a_node)
-
-                if not nf_a and not nf_b:
-                    break
-                failed_a.update(nf_a)
-                failed_b.update(nf_b)
-
-            total_failed = len(failed_a) + len(failed_b)
-            return total_failed
+        simulator = InterdependentCascadeSimulator(
+            capacity_factor=1.5, max_steps=30
+        )
 
         # 基线级联
-        baseline_total = _coupled_cascade(G_a, G_b, removed_node=None)
+        baseline_deps = filter_dependencies(dependencies, G_a, G_b)
+        baseline_data = make_sim_data(G_a, G_b, baseline_deps)
+        baseline_total = simulator.simulate(
+            baseline_data, initial_failures_a=init_fails
+        )['total_failed']
 
         # 逐节点移除
         criticality = np.zeros(N_total)
         for i in range(N_total):
-            total = _coupled_cascade(G_a, G_b, removed_node=i)
+            Ga_i, Gb_i, deps_i, init_i = remove_node(i)
+            data_i = make_sim_data(Ga_i, Gb_i, deps_i)
+            total = simulator.simulate(
+                data_i, initial_failures_a=init_i
+            )['total_failed']
             score = max(0.0, (total - baseline_total) / max(N_total, 1))
             criticality[i] = score
 
@@ -281,7 +235,7 @@ class InterdependentNetworkBuilder:
         # 节点标签 —— 使用相互依赖级联模拟标签
         # 标签反映的是"移除该节点后，在耦合系统中引发的总级联规模增幅"
         labels = self._compute_interdependent_labels(
-            G_a, G_b, dependencies, loader
+            G_a, G_b, dependencies
         )
         y = torch.tensor(labels, dtype=torch.long)
 
@@ -346,9 +300,15 @@ class InterdependentCascadeSimulator:
         """
         G_a = data.nx_graph_a
         G_b = data.nx_graph_b
-        deps: List[Tuple[int, int]] = data.dependencies
+        raw_deps: List[Tuple[int, int]] = data.dependencies
         N_a = data.n_a
         N_b = data.n_b
+        active_nodes_a = set(G_a.nodes())
+        active_nodes_b = set(G_b.nodes())
+        deps = [
+            (a, b) for a, b in raw_deps
+            if a in active_nodes_a and b in active_nodes_b
+        ]
 
         # 构建依赖映射
         a_to_b = {}  # A节点 → 依赖的B节点列表
@@ -380,7 +340,18 @@ class InterdependentCascadeSimulator:
         # 初始故障
         if initial_failures_a is None:
             n_init = max(1, int(N_a * failure_ratio))
-            initial_failures_a = list(np.random.choice(N_a, n_init, replace=False))
+            candidate_a = sorted(active_nodes_a)
+            if candidate_a:
+                n_init = min(n_init, len(candidate_a))
+                initial_failures_a = list(
+                    np.random.choice(candidate_a, n_init, replace=False)
+                )
+            else:
+                initial_failures_a = []
+        else:
+            initial_failures_a = [
+                n for n in initial_failures_a if n in active_nodes_a
+            ]
 
         failed_a = set(initial_failures_a)
         failed_b = set()
